@@ -1,4 +1,4 @@
-FROM ubuntu:21.10 as build-stage
+FROM ubuntu:20.04 as build-stage
 
 RUN apt-get update && \
     apt-get install wget build-essential libz-dev -y
