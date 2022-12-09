@@ -13,7 +13,7 @@ COPY . /opt/java-native-app
 RUN export PATH=/opt/graalvm-ce-java17-22.1.0/bin:$PATH && \
     export JAVA_HOME=/opt/graalvm-ce-java17-22.1.0 && \
     cd /opt/java-native-app && \
-    ./mvnw package -Pnative -DskipNativeTests
+    ./mvnw package -Pnative
 
 # Copy the native executable generated to the host, see the link for more details
 # https://docs.docker.com/engine/reference/commandline/build/#custom-build-outputs
