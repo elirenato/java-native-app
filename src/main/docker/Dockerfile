@@ -1,18 +1,20 @@
-FROM ubuntu:20.04 as build-stage
+FROM debian:bookworm AS build-stage
 
 RUN apt-get update && \
-    apt-get install wget build-essential libz-dev -y
+    apt-get install curl build-essential libz-dev -y
 
+# JVM (GraalVM to use native image in the future)
 RUN cd /opt && \
-    wget "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.1.0/graalvm-ce-java17-linux-amd64-22.1.0.tar.gz" && \
-    tar -xvf graalvm-ce-java17-linux-amd64-22.1.0.tar.gz && \
-    rm -rf graalvm-ce-java17-linux-amd64-22.1.0.tar.gz
+    curl -L -O "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_linux-x64_bin.tar.gz" && \
+    tar -xvf graalvm-community-jdk-23.0.0_linux-x64_bin.tar.gz && \
+    rm -rf graalvm-community-jdk-23.0.0_linux-x64_bin.tar.gz
+
+ENV PATH="${PATH}:/opt/graalvm-community-openjdk-23+37.1/bin"
+ENV JAVA_HOME="/opt/graalvm-community-openjdk-23+37.1"
 
 COPY . /opt/java-native-app
 
-RUN export PATH=/opt/graalvm-ce-java17-22.1.0/bin:$PATH && \
-    export JAVA_HOME=/opt/graalvm-ce-java17-22.1.0 && \
-    cd /opt/java-native-app && \
+RUN cd /opt/java-native-app && \
     ./mvnw package -Pnative
 
 # Copy the native executable generated to the host, see the link for more details
